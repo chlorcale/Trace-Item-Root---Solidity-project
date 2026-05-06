@@ -87,7 +87,48 @@ contract TruyXuatNguonGoc is Ownable {
 
         emit ProductMinted(productCount, _name, _mName, _code, currentHubRegion);
     }
+    function batchMintWithLogs(
+    string[] memory _codes,
+    string[] memory _names,
+    string[] memory _certs,
+    string[] memory _areas,
+    string[] memory _mNames,
+    uint256[] memory _prodDates,
+    ProductType[] memory _pTypes,
+    string[] memory _logDescs,
+    string[] memory _logDetails,
+    string[] memory _logImgs
+) public onlyOwner {
+    require(_codes.length == _names.length, "Du lieu khong dong bo");
+    
+    for (uint256 i = 0; i < _codes.length; i++) {
+        productCount++;
+        Product storage p = products[productCount];
+        
+        p.id = productCount;
+        p.productCode = _codes[i];
+        p.name = _names[i];
+        p.manufacturer = _mNames[i];
+        p.certification = _certs[i];
+        p.rawMaterialArea = _areas[i];
+        p.productionDate = _prodDates[i];
+        p.activationDate = block.timestamp;
+        p.currentOwner = msg.sender;
+        p.pType = _pTypes[i];
+        p.region = currentHubRegion;
 
+        // Thêm ngay nhật ký khởi tạo đồng thời
+        p.history.push(Step({
+            description: _logDescs[i],
+            detail: _logDetails[i],
+            imageHash: _logImgs[i],
+            timestamp: block.timestamp,
+            actor: msg.sender
+        }));
+
+        emit ProductMinted(productCount, _names[i], _mNames[i], _codes[i], currentHubRegion);
+    }
+}
     function addProductionLog(uint256 _id, string memory _desc, string memory _detail, string memory _img) public onlyOwner {
         products[_id].history.push(Step({
             description: _desc,
