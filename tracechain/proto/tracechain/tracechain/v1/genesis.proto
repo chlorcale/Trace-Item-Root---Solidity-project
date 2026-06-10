@@ -1,0 +1,17 @@
+syntax = "proto3";
+package tracechain.tracechain.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "tracechain/tracechain/v1/params.proto";
+
+option go_package = "tracechain/x/tracechain/types";
+
+// GenesisState defines the tracechain module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
